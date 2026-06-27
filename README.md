@@ -110,6 +110,15 @@ from the original C source. If you use it in research, please cite:
 > Hämäläinen, W. *Efficient discovery of the top-K optimal dependency rules with
 > Fisher's exact test of significance.* ICDM 2010.
 
+The `tarone()` correction follows:
+
+> Tarone, R. E. *A modified Bonferroni method for discrete data.* Biometrics
+> 46(2):515–522, 1990.
+
+For its application to pattern mining, see also Terada et al., *Statistical
+significance of combinatorial regulations* (PNAS 2013, "LAMP"), and Hämäläinen &
+Webb, *A tutorial on statistically sound pattern discovery* (DMKD 2019).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
