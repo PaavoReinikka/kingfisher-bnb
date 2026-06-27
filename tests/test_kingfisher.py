@@ -38,3 +38,29 @@ def test_find_rules_basic():
         if set(r.antecedent) | {r.consequent} == {0, 1} and not r.is_negative
     ]
     assert ab, "expected an A=>B (or B=>A) positive rule"
+
+
+def test_tarone_all_testable():
+    # 3 items each present in 5 of 10 rows -> all 3 pairs testable at 0.05
+    data = [[0, 1, 2]] * 5 + [[] for _ in range(5)]
+    res = kf.tarone(data, k=2, alpha=0.05)
+    assert res.n_items == 3 and res.n_hypotheses == 3
+    assert res.m_eff == 3
+    assert abs(res.threshold - 0.05 / 3) < 1e-12
+    assert res.m_eff_at(0.05) == 3
+    assert len(res.spectrum) >= 1
+
+
+def test_tarone_excludes_untestable():
+    # supports [1,5,5]: the two (1,5) pairs are untestable at 0.05 -> m_eff = 1
+    data = [[0, 1, 2]] + [[1, 2]] * 4 + [[] for _ in range(5)]
+    res = kf.tarone(data, k=2, alpha=0.05)
+    assert res.m_eff == 1
+    assert res.threshold == 0.05
+
+
+def test_tarone_no_alpha_returns_spectrum():
+    data = [[0, 1, 2]] * 5 + [[] for _ in range(5)]
+    res = kf.tarone(data, k=2)
+    assert res.alpha is None and res.m_eff is None and res.threshold is None
+    assert res.m_eff_at(0.05) == 3  # still computable from the precomputed spectrum

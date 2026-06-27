@@ -47,3 +47,31 @@ def find_rules_from_data(
         consequent_only: attributes that may only ever appear as the consequent.
     """
     ...
+
+class TaroneResult:
+    """Tarone effective-number-of-tests analysis over the pairwise Fisher space."""
+    n_items: int
+    n_transactions: int
+    n_hypotheses: int
+    alpha: Optional[float]
+    m_eff: Optional[int]
+    threshold: Optional[float]
+    spectrum: List[Tuple[float, int]]
+    """Minimal-attainable-p histogram: (min_p, pair_count), ascending by min_p."""
+    def m_eff_at(self, alpha: float) -> int: ...
+    def threshold_at(self, alpha: float) -> float: ...
+
+def tarone(data: List[List[int]], k: int, alpha: Optional[float] = None) -> TaroneResult:
+    """Tarone's effective number of tests over pairwise Fisher hypotheses.
+
+    Multiple-testing correction is defined on p-values, so this is Fisher-only.
+    If ``alpha`` is given, ``m_eff`` and ``threshold`` (= alpha / m_eff) are
+    populated; either way ``spectrum`` and ``m_eff_at(alpha)`` are available for
+    any alpha without recomputing over the data.
+
+    Args:
+        data: transactions as lists of attribute indices (sparse rows).
+        k: maximum attribute index (number of columns - 1).
+        alpha: target family-wise error rate; if given, fills m_eff/threshold.
+    """
+    ...

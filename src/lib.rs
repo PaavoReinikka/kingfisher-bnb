@@ -1,4 +1,5 @@
 pub mod bnb;
+mod correction;
 
 use crate::bnb::{SearchProblem, SearchState, OptimizationGoal, solvers::BestFirstSolver};
 use bitvec::prelude::*;
@@ -535,7 +536,9 @@ fn find_rules_from_data(
 #[pymodule]
 fn kingfisher_bnb_extension(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(find_rules_from_data, m)?)?;
+    m.add_function(wrap_pyfunction!(crate::correction::tarone, m)?)?;
     m.add_class::<Rule>()?;
+    m.add_class::<crate::correction::TaroneResult>()?;
     Ok(())
 }
 
