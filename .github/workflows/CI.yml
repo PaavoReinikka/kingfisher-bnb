@@ -6,6 +6,11 @@ on:
     tags: ['*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_testpypi:
+        description: "Build all artifacts and publish them to TestPyPI"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -67,16 +72,10 @@ jobs:
           pip install kingfisher-bnb pytest --find-links dist --force-reinstall
           pytest -q
 
+  # Apple Silicon (arm64) only. Intel (macos-13) is dropped: the Intel runner
+  # pool queues for a long time and macOS x86_64 is increasingly legacy.
   macos:
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: macos-13
-            target: x86_64
-          - runner: macos-14
-            target: aarch64
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -85,13 +84,13 @@ jobs:
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
-          target: ${{ matrix.target }}
+          target: aarch64
           args: --release --out dist
           sccache: 'true'
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-macos-${{ matrix.target }}
+          name: wheels-macos-aarch64
           path: dist
       - name: pytest
         run: |
@@ -114,13 +113,15 @@ jobs:
           name: wheels-sdist
           path: dist
 
-  # Publishes to PyPI on tag push (e.g. `git tag v0.1.0 && git push --tags`).
-  # Requires a Trusted Publisher to be configured on PyPI for this repo/workflow
-  # (no API token needed). See README / setup notes.
+  # Publishing (no API tokens — uses PyPI/TestPyPI Trusted Publishing / OIDC):
+  #   * TestPyPI: Actions -> CI -> "Run workflow" with publish_testpypi = true
+  #   * PyPI:     push a version tag, e.g. `git tag v0.1.0 && git push origin v0.1.0`
+  # Requires a pending/active Trusted Publisher configured on each index for
+  # this repo + workflow (see RELEASING.md).
   release:
-    name: Release (PyPI)
+    name: Release
     runs-on: ubuntu-latest
-    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish_testpypi) }}
     needs: [linux, windows, macos, sdist]
     permissions:
       id-token: write   # OIDC for trusted publishing
@@ -131,5 +132,9 @@ jobs:
           path: dist
           merge-multiple: true
       - uses: astral-sh/setup-uv@v5
-      - name: Publish to PyPI (trusted publishing)
+      - name: Publish to TestPyPI
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: uv publish --trusted-publishing always --publish-url https://test.pypi.org/legacy/ dist/*
+      - name: Publish to PyPI
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: uv publish --trusted-publishing always dist/*
