@@ -533,7 +533,7 @@ fn find_rules_from_data(
     Ok(Arc::try_unwrap(problem.ruleset).unwrap().into_inner().unwrap().into_sorted_vec())
 }
 #[pymodule]
-fn kingfisher_bnb_extension(_py: Python, m: &PyModule) -> PyResult<()> {
+fn kingfisher_bnb_extension(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(find_rules_from_data, m)?)?;
     m.add_class::<Rule>()?;
     Ok(())
