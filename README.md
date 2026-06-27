@@ -78,6 +78,29 @@ Data format: one transaction per line, space-separated attribute indices.
 
 `t_type` is a separate axis (rule direction): `1` positive, `2` negative, `3` both.
 
+## Multiple-testing correction (Tarone)
+
+`find_rules_from_data` returns **raw** p-values. To control the family-wise error
+rate over the many pairwise Fisher tests, `tarone()` computes the *effective*
+number of tests via Tarone's method — counting only **testable** hypotheses
+(pairs whose minimum attainable p, given the margins, can reach significance). It
+reuses the same bounds the search uses, so it is cheap, and far more powerful than
+plain Bonferroni over `C(n_items, 2)`.
+
+```python
+res = kf.tarone(sparse, k=2, alpha=0.05)
+res.m_eff           # effective number of tests (<= C(n_items, 2))
+res.threshold       # corrected raw-p cutoff = alpha / m_eff
+res.m_eff_at(0.01)  # any other alpha, no recomputation over the data
+res.spectrum        # [(min_p, count), ...] minimal-p histogram
+
+# a pair is significant when its raw Fisher p <= res.threshold
+```
+
+Correction is defined on p-values, so it applies to the **Fisher** measure only
+(`measure_type` 1/2); chi²/MI/leverage are effect sizes with no p-value to correct.
+Pairwise (single-item) hypotheses.
+
 ## Attribution
 
 This is an independent Rust implementation of the Kingfisher algorithm from
