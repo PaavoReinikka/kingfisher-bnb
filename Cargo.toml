@@ -1,6 +1,6 @@
 [package]
 name = "kingfisher_bnb"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.85"
 description = "Fast Kingfisher rule mining (top-K non-redundant dependency rules) via parallel Branch and Bound."

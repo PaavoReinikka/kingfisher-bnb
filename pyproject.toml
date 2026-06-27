@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "kingfisher-bnb"
-version = "0.1.0"
+version = "0.2.0"
 description = "Fast Kingfisher rule mining (top-K non-redundant dependency rules via Fisher's exact test) using parallel Branch and Bound."
 readme = "README.md"
 requires-python = ">=3.8"
