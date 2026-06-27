@@ -113,7 +113,7 @@ from the original C source. If you use it in research, please cite:
 The `tarone()` correction follows:
 
 > Tarone, R. E. *A modified Bonferroni method for discrete data.* Biometrics
-> 46(2):515–522, 1990.
+> 46(2):515–522, 1990. PMID: 2364136.
 
 For its application to pattern mining, see also Terada et al., *Statistical
 significance of combinatorial regulations* (PNAS 2013, "LAMP"), and Hämäläinen &
