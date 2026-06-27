@@ -1,0 +1,34 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "kingfisher-bnb"
+version = "0.1.0"
+description = "Fast Kingfisher rule mining (top-K non-redundant dependency rules via Fisher's exact test) using parallel Branch and Bound."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Paavo Reinikka" }]
+keywords = ["data-mining", "association-rules", "dependency-rules", "fishers-exact", "kingfisher", "branch-and-bound"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = ["numpy"]
+
+[project.urls]
+Homepage = "https://github.com/PaavoReinikka/kingfisher-bnb"
+Repository = "https://github.com/PaavoReinikka/kingfisher-bnb"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "kingfisher_bnb.kingfisher_bnb_extension"
+python-source = "python"
+
+[dependency-groups]
+dev = ["maturin>=1.12.6", "pytest>=8"]

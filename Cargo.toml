@@ -1,0 +1,28 @@
+[package]
+name = "kingfisher_bnb"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Fast Kingfisher rule mining (top-K non-redundant dependency rules) via parallel Branch and Bound."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/PaavoReinikka/kingfisher-bnb"
+keywords = ["data-mining", "association-rules", "fishers-exact", "branch-and-bound", "kingfisher"]
+categories = ["algorithms", "science"]
+authors = ["Paavo Reinikka"]
+
+[lib]
+name = "kingfisher_bnb_extension"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "kingfisher"
+path = "src/main.rs"
+
+[dependencies]
+bitvec = "1.0"
+dashmap = { version = "5.5", features = ["rayon"] }
+parking_lot = "0.12"
+rayon = "1.8"
+pyo3 = { version = "0.19", features = ["extension-module"] }
+clap = { version = "4.4", features = ["derive"] }

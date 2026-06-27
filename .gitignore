@@ -1,0 +1,15 @@
+# Rust
+/target
+
+# Python build artifacts (the compiled extension is built locally / in CI, never committed)
+*.pyd
+*.pdb
+*.so
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+dist/
+build/
+wheels/
+.pytest_cache/
